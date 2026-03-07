@@ -1,12 +1,13 @@
 FROM python:3.12-slim
 
-WORKDIR /app
+WORKDIR /workspace
 
 COPY app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app/ .
+COPY app/ app/
+COPY tests/ tests/
 
 EXPOSE 5000
 
-CMD ["python", "main.py"]
+CMD ["python", "app/main.py"]
