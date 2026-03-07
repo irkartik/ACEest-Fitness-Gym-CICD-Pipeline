@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        PATH         = "/usr/local/bin:${env.PATH}"
         DOCKER_IMAGE = 'aceest-fitness'
         DOCKER_TAG   = "${env.BUILD_NUMBER}"
     }
