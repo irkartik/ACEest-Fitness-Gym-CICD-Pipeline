@@ -85,7 +85,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh """
-                    export KUBECONFIG=/Users/raju.jha/.kube/config
+                    export KUBECONFIG=$HOME/.kube/config
                     echo "Using KUBECONFIG: \$KUBECONFIG"
                     kubectl config current-context
                     kubectl set image deployment/aceest-fitness \
@@ -103,7 +103,7 @@ pipeline {
         failure {
             echo "BUILD #${env.BUILD_NUMBER} FAILED — Running rollback..."
             sh '''
-                export KUBECONFIG=/Users/raju.jha/.kube/config
+                export KUBECONFIG=$HOME/.kube/config
                 kubectl rollout undo deployment/aceest-fitness || true
             '''
         }
