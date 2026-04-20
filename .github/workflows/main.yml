@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  DOCKERHUB_USER: rajujha373
+  IMAGE_NAME: aceest-fitness-github
+
 jobs:
   build-and-lint:
     name: Build & Lint
@@ -28,8 +32,8 @@ jobs:
           pip install flake8
           flake8 app/ --max-line-length=120 --statistics --count
 
-  docker-build:
-    name: Docker Image Assembly
+  automated-testing:
+    name: Automated Testing
     runs-on: ubuntu-latest
     needs: build-and-lint
 
@@ -37,20 +41,45 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t aceest-fitness:${{ github.sha }} .
+      - name: Build Docker image for testing
+        run: docker build -t aceest-fitness:test .
 
-  automated-testing:
-    name: Automated Testing
+      - name: Run Pytest inside container
+        run: docker run --rm aceest-fitness:test python -m pytest tests/ -v --tb=short
+
+  docker-push:
+    name: Docker Build & Push
     runs-on: ubuntu-latest
-    needs: docker-build
+    needs: automated-testing
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t aceest-fitness:test .
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Run Pytest inside container
-        run: docker run --rm aceest-fitness:test python -m pytest tests/ -v --tb=short
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: rajujha373/aceest-fitness-github
+          tags: |
+            type=raw,value=latest
+            type=raw,value=v${{ github.run_number }}
+            type=sha,prefix=sha-,format=short
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Print pushed tags
+        run: echo "Pushed tags -- ${{ steps.meta.outputs.tags }}"
