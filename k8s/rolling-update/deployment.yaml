@@ -23,7 +23,7 @@ spec:
       containers:
         - name: aceest-fitness
           image: aceest-fitness:latest
-          imagePullPolicy: Never   # Use local image built into Minikube's Docker daemon
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
           env:
