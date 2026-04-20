@@ -144,7 +144,12 @@ def index():
 
 @app.route("/health")
 def health():
-    return jsonify({"status": "healthy", "app": "ACEest Fitness & Gym API"})
+    return jsonify({
+        "status": "healthy",
+        "app": "ACEest Fitness & Gym API",
+        "git_commit": os.environ.get("GIT_COMMIT", "unknown"),
+        "build_number": os.environ.get("BUILD_NUMBER", "unknown"),
+    })
 
 
 # ---------- Routes: Programs ----------
