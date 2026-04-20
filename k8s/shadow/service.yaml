@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: aceest-fitness-production-svc
+  labels:
+    app: aceest-fitness
+    tier: production
+    strategy: shadow
+spec:
+  type: NodePort
+  selector:
+    app: aceest-fitness
+    tier: production   # Only live traffic goes to production pods
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 5000
+      nodePort: 30084
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aceest-fitness-shadow-svc
+  labels:
+    app: aceest-fitness
+    tier: shadow
+    strategy: shadow
+  annotations:
+    # Internal ClusterIP service for shadow — receives mirrored traffic only, not user traffic
+spec:
+  type: ClusterIP
+  selector:
+    app: aceest-fitness
+    tier: shadow
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 5000

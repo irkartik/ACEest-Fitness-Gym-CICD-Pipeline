@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aceest-fitness-green
+  labels:
+    app: aceest-fitness
+    slot: green
+    strategy: blue-green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: aceest-fitness
+      slot: green
+  template:
+    metadata:
+      labels:
+        app: aceest-fitness
+        slot: green
+        version: v2.0
+    spec:
+      containers:
+        - name: aceest-fitness
+          image: aceest-fitness:v2.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          env:
+            - name: ACEEST_DB
+              value: /data/aceest_fitness.db
+          volumeMounts:
+            - name: db-storage
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+      volumes:
+        - name: db-storage
+          emptyDir: {}
