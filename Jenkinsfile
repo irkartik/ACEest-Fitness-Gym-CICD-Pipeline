@@ -77,6 +77,8 @@ pipeline {
             steps {
                 sh """
                     docker build \
+                        --build-arg GIT_COMMIT=${env.GIT_COMMIT} \
+                        --build-arg BUILD_NUMBER=${DOCKER_TAG} \
                         -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
                         -t ${DOCKER_IMAGE}:latest \
                         .
@@ -95,6 +97,8 @@ pipeline {
                         echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
                         docker buildx build \
                             --platform linux/amd64 \
+                            --build-arg GIT_COMMIT=${env.GIT_COMMIT} \
+                            --build-arg BUILD_NUMBER=${DOCKER_TAG} \
                             -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
                             -t ${DOCKER_IMAGE}:latest \
                             --push \
