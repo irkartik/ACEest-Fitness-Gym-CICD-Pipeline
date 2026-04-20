@@ -1,3 +1,5 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=irkartik_ACEest-Fitness-Gym-CICD-Pipeline&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=irkartik_ACEest-Fitness-Gym-CICD-Pipeline)
+
 # ACEest Fitness & Gym — CI/CD Pipeline
 
 A Flask REST API for ACEest Functional Fitness, with a full CI/CD pipeline powered by **Jenkins** and **GitHub Actions**. The application manages fitness programs, client profiles, workouts, and progress tracking — all containerized with Docker for portable, consistent deployments.
