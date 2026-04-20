@@ -85,9 +85,11 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh """
+                    export KUBECONFIG=$HOME/.kube/config
+                    echo "Using KUBECONFIG: \$KUBECONFIG"
+                    kubectl config current-context
                     kubectl set image deployment/aceest-fitness \
-                        aceest-fitness=${DOCKER_IMAGE}:${DOCKER_TAG} \
-                        --record
+                        aceest-fitness=${DOCKER_IMAGE}:${DOCKER_TAG}
                     kubectl rollout status deployment/aceest-fitness --timeout=120s
                 """
             }
@@ -101,6 +103,7 @@ pipeline {
         failure {
             echo "BUILD #${env.BUILD_NUMBER} FAILED — Running rollback..."
             sh '''
+                export KUBECONFIG=$HOME/.kube/config
                 kubectl rollout undo deployment/aceest-fitness || true
             '''
         }
