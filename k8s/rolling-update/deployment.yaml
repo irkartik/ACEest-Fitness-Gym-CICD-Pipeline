@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: aceest-fitness
-          image: aceest-fitness:latest
+          image: rajujha373/aceest-fitness-jenkins:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
