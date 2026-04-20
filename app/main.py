@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from flask import Flask, jsonify, request, g
+from flask import Flask, jsonify, request, g, render_template
 
 app = Flask(__name__)
 
@@ -129,6 +129,14 @@ def init_db():
 
     db.commit()
     db.close()
+
+
+# ---------- Routes: Homepage ----------
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 
 # ---------- Routes: Health ----------

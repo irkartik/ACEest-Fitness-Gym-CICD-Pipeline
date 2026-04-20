@@ -97,5 +97,12 @@ jobs:
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.projectKey=irkartik_ACEest-Fitness-Gym-CICD-Pipeline
+            -Dsonar.organization=irkartik
+            -Dsonar.sources=app
+            -Dsonar.tests=tests
+            -Dsonar.python.version=3.12
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
