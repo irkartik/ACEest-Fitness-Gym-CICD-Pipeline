@@ -1,0 +1,48 @@
+---
+# Primary Ingress — Version A receives all default traffic
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aceest-fitness-ingress-a
+  labels:
+    strategy: ab-testing
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: aceest-fitness.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: aceest-fitness-svc-a
+                port:
+                  number: 80
+---
+# Canary Ingress — Version B receives traffic when header X-Variant: B is present
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aceest-fitness-ingress-b
+  labels:
+    strategy: ab-testing
+  annotations:
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-by-header: "X-Variant"
+    nginx.ingress.kubernetes.io/canary-by-header-value: "B"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: aceest-fitness.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: aceest-fitness-svc-b
+                port:
+                  number: 80
