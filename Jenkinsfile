@@ -93,8 +93,12 @@ pipeline {
                 )]) {
                     sh """
                         echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
-                        docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                        docker push ${DOCKER_IMAGE}:latest
+                        docker buildx build \
+                            --platform linux/amd64 \
+                            -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
+                            -t ${DOCKER_IMAGE}:latest \
+                            --push \
+                            .
                         docker logout
                     """
                 }
