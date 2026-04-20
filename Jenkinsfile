@@ -54,6 +54,25 @@ pipeline {
             }
         }
 
+        stage('SonarCloud Analysis') {
+            steps {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        WORKSPACE_DIR="$(pwd)"
+                        docker run --rm \
+                            -e SONAR_TOKEN="$SONAR_TOKEN" \
+                            -v "$WORKSPACE_DIR:/usr/src" \
+                            sonarsource/sonar-scanner-cli \
+                            -Dsonar.projectKey=irkartik_ACEest-Fitness-Gym-CICD-Pipeline \
+                            -Dsonar.organization=irkartik \
+                            -Dsonar.sources=app \
+                            -Dsonar.tests=tests \
+                            -Dsonar.host.url=https://sonarcloud.io
+                    '''
+                }
+            }
+        }
+
         stage('Docker Build') {
             steps {
                 sh """
